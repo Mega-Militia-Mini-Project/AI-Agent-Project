@@ -1,0 +1,15 @@
+fastapi
+uvicorn[standard]
+pydantic>=2.0
+annotated-types
+typing-extensions
+langchain
+langchain-core
+langchain-groq
+langchain-openai
+langchain-tavily
+langchain-community
+langgraph
+streamlit
+requests
+python-dotenv
