@@ -1,117 +1,160 @@
-# AI Agent Project
+# 🤖 GenQuery: A Multi-Agent Conversational AI System
 
-A sophisticated multi-agent AI orchestration system built with FastAPI and LangChain. This project provides intelligent conversational capabilities through single-agent and multi-agent modes, enabling dynamic AI interactions with support for multiple LLM providers.
+---
 
-## 📋 Project Overview
+## 📌 Overview
 
-This project implements an advanced AI agent system that can:
-- **Single Agent Mode**: Direct interaction with specified AI models with optional web search
-- **Multi-Agent Sequential Mode**: Specialized agents work in sequence (Research → Analysis → Synthesis)
-- **Multi-Agent Debate Mode**: Multiple perspectives (Optimist, Skeptic, Neutral) debate topics and reach consensus
-- **Multiple LLM Support**: Seamless integration with Groq, OpenAI, and Google Gemini
-- **Web Search Integration**: Real-time data collection via Tavily Search
+**GenQuery** is a multi-agent conversational AI system that coordinates specialized AI agents to collaboratively process user queries and generate accurate, well-structured, and context-aware responses. Unlike traditional single-agent chatbots, GenQuery distributes reasoning across multiple agents — each with a defined role — to improve factual accuracy, reduce hallucinations, and deliver transparent, explainable outputs.
+
+The system supports three operating modes:
+
+- **Single Agent Mode** — Direct LLM interaction with optional web search
+- **Sequential Multi-Agent Mode** — Research → Analysis → Writing pipeline
+- **Debate Multi-Agent Mode** — Optimist / Skeptic / Neutral agents debate, with a Mediator synthesizing a consensus
+
+---
 
 ## 🏗️ Architecture
 
-### Core Components
+```
+User Query
+    ↓
+Streamlit Frontend
+    ↓
+FastAPI /chat Endpoint
+    ↓
+┌──────────────────────────────────────────────────┐
+│                                                  │
+│  Single Agent    Sequential Multi-Agent    Debate Multi-Agent  │
+│      ↓                   ↓                         ↓          │
+│  [Optional          Research Agent           3-Agent Debate   │
+│  Web Search]             ↓                  (Optimist,        │
+│      ↓             Analyzer Agent           Skeptic,          │
+│   Response               ↓                  Neutral)          │
+│                     Writer Agent                 ↓            │
+│                          ↓                  Mediator          │
+│                     3 Outputs               4 Outputs         │
+└──────────────────────────────────────────────────┘
+                          ↓
+                  UI Result Display
+```
 
-#### `backend.py` - FastAPI Application
-- **Purpose**: REST API server for AI agent interactions
-- **Key Features**:
-  - `/chat` endpoint that accepts queries and returns AI-generated responses
-  - Pydantic request model validation
-  - Support for 6+ LLM models
-  - Dynamic routing between single-agent and multi-agent systems
-  - Configurable agent modes (sequential/debate)
-  
-- **Supported Models**:
-  - `llama3-70b-8192` (Groq)
-  - `groq/compound-mini` (Groq)
-  - `llama-3.3-70b-versatile` (Groq)
-  - `gemini-2.0-flash` (Google Gemini)
-  - `gemini-2.5-pro` (Google Gemini)
-  - `openai/gpt-oss-120b` (OpenAI)
+---
 
-#### `multi_agent.py` - Multi-Agent Orchestration
-Contains the `MultiAgentOrchestrator` class with specialized agents:
+## 🧠 Agent Roles & Responsibilities
 
-**Specialized Agents:**
-1. **Research Agent** - Raw data collection
-   - Extracts facts, statistics, and concrete information
-   - Lists sources and URLs from web searches
-   - Presents data in bullet points without interpretation
-   
-2. **Analyzer Agent** - Critical analysis
-   - Identifies patterns and trends
-   - Compares and contrasts data points
-   - Evaluates credibility and biases
-   - Generates deeper insights
-   
-3. **Writer Agent** - Synthesis and communication
-   - Synthesizes research and analysis into coherent answers
-   - Formats responses with proper structure
-   - Provides actionable takeaways with citations
-   
-4. **Debate Agents** (in debate mode):
-   - **Optimist** 🌟: Focuses on opportunities and positive aspects
-   - **Skeptic** ⚠️: Focuses on risks and limitations
-   - **Neutral** 📊: Objective evidence-based analysis
-   - **Mediator** ⚖️: Synthesizes perspectives and builds consensus
+| Agent | Mode | Primary Task | Output |
+|---|---|---|---|
+| **Research Agent** | Sequential | Collects raw factual data via web search | Bullet list of facts & sources |
+| **Analyzer Agent** | Sequential | Evaluates patterns, contradictions, reliability | Insight-driven analysis |
+| **Writer Agent** | Sequential | Synthesizes final structured response | Well-formatted answer |
+| **Optimist** | Debate | Highlights positive outcomes and evidence | Supportive perspective |
+| **Skeptic** | Debate | Lists risks, flaws, and uncertainties | Critical view |
+| **Neutral Analyst** | Debate | Evaluates data without bias | Balanced facts |
+| **Mediator** | Debate | Combines all viewpoints into consensus | Final refined output |
 
-**Processing Modes:**
-- **Sequential Mode** (`process_query`): Research → Analyze → Write pipeline
-- **Debate Mode** (`debate_mode`): Multiple perspectives debated, then mediated to consensus
+---
+
+## 🗂️ Project Structure
+
+```
+AI-Agent-Project/
+├── backend.py          # FastAPI REST API — routing, validation, endpoint logic
+├── multi_agent.py      # MultiAgentOrchestrator — all agent logic and pipelines
+├── requirements.txt    # Python dependencies
+├── .env.example        # Template for environment variables
+├── .gitignore
+└── ReadMe.md
+```
+
+---
+
+## ⚙️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | Streamlit |
+| **Backend** | FastAPI + Python |
+| **AI Framework** | LangChain, LangGraph |
+| **LLM Providers** | Groq, OpenAI, Google Gemini |
+| **Web Search** | Tavily Search API |
+| **Env Management** | python-dotenv |
+| **Hosting** | Localhost / Cloud-compatible |
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Python 3.8+
-- API keys for desired LLM providers (Groq, OpenAI, Google Gemini)
+- API keys for at least one LLM provider (Groq, OpenAI, or Google Gemini)
+- A Tavily API key (required for web search features)
 
-### Installation
+### 1. Clone the Repository
 
-1. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   cd AI-Agent-Project
-   ```
+```bash
+git clone https://github.com/Mega-Militia-Mini-Project/AI-Agent-Project.git
+cd AI-Agent-Project
+```
 
-2. **Create a virtual environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+### 2. Create a Virtual Environment
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python -m venv venv
 
-4. **Set up environment variables**:
-   Create a `.env` file in the project root:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key
-   GROQ_API_KEY=your_groq_api_key
-   OPENAI_API_KEY=your_openai_api_key
-   TAVILY_API_KEY=your_tavily_api_key
-   ```
+# On macOS/Linux
+source venv/bin/activate
 
-### Running the Server
+# On Windows
+venv\Scripts\activate
+```
 
-Start the FastAPI server:
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Set Up Environment Variables
+
+Copy the example environment file and fill in your API keys:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
+TAVILY_API_KEY=your_tavily_api_key_here
+```
+
+> **Note:** A Gemini API key (as `GEMINI_API_KEY`) is also required if using Google Gemini models.
+
+### 5. Run the Backend Server
+
 ```bash
 python backend.py
 ```
 
-The server will run on `http://127.0.0.1:9999`
+The server starts at: **`http://127.0.0.1:9999`**
 
-## 📡 API Endpoints
+- Swagger UI: `http://127.0.0.1:9999/docs`
+- ReDoc: `http://127.0.0.1:9999/redoc`
 
-### POST `/chat`
+---
+
+## 📡 API Reference
+
+### `POST /chat`
 
 Send a query to the AI agent system.
 
 **Request Body:**
+
 ```json
 {
   "model_name": "llama3-70b-8192",
@@ -124,23 +167,39 @@ Send a query to the AI agent system.
 }
 ```
 
-**Request Parameters:**
-- `model_name` (string, required): Name of the LLM model to use
-- `model_provider` (string, required): Provider - "Groq", "OpenAI", or "Gemini"
-- `system_prompt` (string, required): System prompt for the agent
-- `messages` (list, required): List of user messages (query is first element)
-- `allow_search` (boolean, required): Enable web search via Tavily
-- `use_multi_agent` (boolean, optional): Enable multi-agent mode (default: false)
-- `agent_mode` (string, optional): "sequential" or "debate" (default: "sequential")
+**Parameters:**
 
-**Response (Single Agent):**
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `model_name` | string | ✅ | Name of the LLM model |
+| `model_provider` | string | ✅ | `"Groq"`, `"OpenAI"`, or `"Gemini"` |
+| `system_prompt` | string | ✅ | System-level instruction for the agent |
+| `messages` | list[string] | ✅ | User query (first element used) |
+| `allow_search` | boolean | ✅ | Enable Tavily web search |
+| `use_multi_agent` | boolean | ❌ | Enable multi-agent mode (default: `false`) |
+| `agent_mode` | string | ❌ | `"sequential"` or `"debate"` (default: `"sequential"`) |
+
+**Supported Models:**
+
+| Model Name | Provider |
+|---|---|
+| `llama3-70b-8192` | Groq |
+| `groq/compound-mini` | Groq |
+| `llama-3.3-70b-versatile` | Groq |
+| `gemini-2.0-flash` | Google Gemini |
+| `gemini-2.5-pro` | Google Gemini |
+| `openai/gpt-oss-120b` | OpenAI |
+
+**Response — Single Agent:**
+
 ```json
 {
   "final_response": "The AI agent's response..."
 }
 ```
 
-**Response (Multi-Agent):**
+**Response — Multi-Agent Sequential:**
+
 ```json
 {
   "final_response": "The synthesized response...",
@@ -150,9 +209,23 @@ Send a query to the AI agent system.
 }
 ```
 
-## 📝 Example Usage
+**Response — Multi-Agent Debate:**
+
+```json
+{
+  "final_response": "Mediator's consensus...",
+  "optimist_response": "...",
+  "skeptic_response": "...",
+  "neutral_response": "..."
+}
+```
+
+---
+
+## 💻 Usage Examples
 
 ### Single Agent Mode
+
 ```python
 import requests
 
@@ -170,130 +243,88 @@ response = requests.post(
 print(response.json())
 ```
 
-### Multi-Agent Sequential Mode
+### Sequential Multi-Agent Mode
+
 ```python
 response = requests.post(
     "http://127.0.0.1:9999/chat",
     json={
-        "model_name": "llama3-70b-8192",
+        "model_name": "llama-3.3-70b-versatile",
         "model_provider": "Groq",
-        "system_prompt": "You are an expert.",
-        "messages": ["Explain quantum computing"],
+        "system_prompt": "You are an expert researcher.",
+        "messages": ["Explain the current state of quantum computing."],
         "allow_search": True,
         "use_multi_agent": True,
         "agent_mode": "sequential"
     }
 )
+print(response.json())
 ```
 
-### Multi-Agent Debate Mode
+### Debate Multi-Agent Mode
+
 ```python
 response = requests.post(
     "http://127.0.0.1:9999/chat",
     json={
         "model_name": "gemini-2.0-flash",
         "model_provider": "Gemini",
-        "system_prompt": "You are analytical.",
+        "system_prompt": "You are an analytical AI.",
         "messages": ["Should we invest in renewable energy?"],
         "allow_search": True,
         "use_multi_agent": True,
         "agent_mode": "debate"
     }
 )
+print(response.json())
 ```
 
-## 📚 Dependencies
+---
 
-| Package | Purpose |
-|---------|---------|
-| **FastAPI** | Web framework for building APIs |
-| **Uvicorn** | ASGI server for FastAPI |
-| **Pydantic** | Data validation and serialization |
-| **LangChain** | Framework for building LLM applications |
-| **LangChain-Groq** | Integration with Groq API |
-| **LangChain-OpenAI** | Integration with OpenAI API |
-| **LangChain-Google** | Integration with Google Generative AI |
-| **LangChain-Tavily** | Web search integration |
-| **LangGraph** | Graph-based agent orchestration |
-| **Streamlit** | Optional UI framework |
-| **python-dotenv** | Environment variable management |
+## 📊 Performance Analysis
 
-## 🔄 Agent Processing Pipeline
+| Category | Single-Agent | Multi-Agent | Improvement |
+|---|---|---|---|
+| Factual Accuracy | Medium | High | Improved grounding |
+| Output Structure | Simple text | Well-structured | Better readability |
+| Transparency | None | Full reasoning trace | User trust improved |
+| Adaptability | 1 model | 3 LLM providers | Smart switching |
+| Perspectives | Single view | Multi-view consensus | Avoids bias |
 
-### Sequential Mode
-```
-User Query
-    ↓
-Research Agent (collects raw data)
-    ↓
-Analyzer Agent (analyzes patterns)
-    ↓
-Writer Agent (synthesizes response)
-    ↓
-Final Response
-```
+---
 
-### Debate Mode
-```
-User Query
-    ↓
-├─ Optimist Agent (positive perspective)
-├─ Skeptic Agent (critical perspective)
-└─ Neutral Agent (objective perspective)
-    ↓
-Mediator Agent (synthesizes consensus)
-    ↓
-Final Response
-```
+## 🧪 Functional Testing Results
 
-## 🎯 Key Features
+| Test Scenario | Status |
+|---|---|
+| Query without search enabled | ✅ Pass |
+| Query with search enabled | ✅ Pass |
+| Invalid model selected | ✅ Pass |
+| Debate mode — multi-view + mediator | ✅ Pass |
+| High-latency request | ✅ Pass |
+| Missing API key | ✅ Pass |
 
-- ✅ **Multiple LLM Support**: Seamless integration with Groq, OpenAI, and Google Gemini
-- ✅ **Specialized Agent Roles**: Research, Analysis, Writing, and Debate agents
-- ✅ **Web Search Integration**: Real-time information gathering via Tavily
-- ✅ **Debate Mode**: Multiple perspectives with automated consensus building
-- ✅ **REST API**: Simple HTTP interface for easy integration
-- ✅ **Configurable Prompts**: Custom system prompts for different use cases
-- ✅ **Error Handling**: Model validation and allowed models checking
+---
 
-## 🛠️ Development
+## 🔮 Future Scope
 
-### Project Structure
-```
-AI-Agent-Project/
-├── backend.py              # FastAPI application
-├── multi_agent.py          # Multi-agent orchestration logic
-├── requirements.txt        # Python dependencies
-└── ReadMe.md              # This file
-```
+- Integration with additional AI providers (Claude, DeepSeek, LLaMA variants)
+- Domain-specific debate personas (legal expert, medical analyst, financial advisor)
+- Long-term memory for cross-session context retention
+- Browser extension and mobile app deployment
+- Enhanced tool support (calculators, code runners, document readers)
+- Analytics dashboard for agent performance monitoring
+- Enterprise API with authentication and rate limiting
+- Reinforcement learning for agent coordination optimization
 
-### Adding New Models
-
-To add a new LLM model:
-1. Add the model name to `ALLOWED_MODEL_NAMES` in `backend.py`
-2. Ensure the provider is supported in `_get_llm()` method
-
-### Adding New Agents
-
-To create new specialized agents in `multi_agent.py`:
-1. Create a new agent method following the pattern of existing agents
-2. Define its role and system prompt
-3. Integrate it into the processing pipeline
-
-## 📖 API Documentation
-
-Once the server is running, visit:
-- **Swagger UI**: `http://127.0.0.1:9999/docs`
-- **ReDoc**: `http://127.0.0.1:9999/redoc`
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues.
+---
 
 ## 📄 License
 
-This project is provided as-is for educational and development purposes.
+This project is submitted as a B.Tech dissertation at RCOEM, Nagpur. It is provided for educational and academic purposes.
 
-## 📬 Support
+---
 
-For questions or issues, please refer to the project documentation or contact the development team.
+## 📬 Contact
+
+For questions or contributions, please open an issue on the (https://github.com/Mega-Militia-Mini-Project/AI-Agent-Project).
