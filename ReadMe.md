@@ -2,7 +2,7 @@
 
 ---
 
-## 📌 Overview
+## Overview
 
 **GenQuery** is a multi-agent conversational AI system that coordinates specialized AI agents to collaboratively process user queries and generate accurate, well-structured, and context-aware responses. Unlike traditional single-agent chatbots, GenQuery distributes reasoning across multiple agents — each with a defined role — to improve factual accuracy, reduce hallucinations, and deliver transparent, explainable outputs.
 
@@ -14,7 +14,7 @@ The system supports three operating modes:
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 User Query
@@ -41,7 +41,7 @@ FastAPI /chat Endpoint
 
 ---
 
-## 🧠 Agent Roles & Responsibilities
+## Agent Roles & Responsibilities
 
 | Agent | Mode | Primary Task | Output |
 |---|---|---|---|
@@ -55,7 +55,7 @@ FastAPI /chat Endpoint
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 AI-Agent-Project/
@@ -69,7 +69,7 @@ AI-Agent-Project/
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -83,7 +83,7 @@ AI-Agent-Project/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -147,7 +147,7 @@ The server starts at: **`http://127.0.0.1:9999`**
 
 ---
 
-## 📡 API Reference
+##  API Reference
 
 ### `POST /chat`
 
@@ -222,7 +222,7 @@ Send a query to the AI agent system.
 
 ---
 
-## 💻 Usage Examples
+##  Usage Examples
 
 ### Single Agent Mode
 
@@ -281,7 +281,7 @@ print(response.json())
 
 ---
 
-## 📊 Performance Analysis
+## Performance Analysis
 
 | Category | Single-Agent | Multi-Agent | Improvement |
 |---|---|---|---|
@@ -293,7 +293,7 @@ print(response.json())
 
 ---
 
-## 🧪 Functional Testing Results
+## Functional Testing Results
 
 | Test Scenario | Status |
 |---|---|
@@ -306,7 +306,7 @@ print(response.json())
 
 ---
 
-## 🔮 Future Scope
+##  Future Scope
 
 - Integration with additional AI providers (Claude, DeepSeek, LLaMA variants)
 - Domain-specific debate personas (legal expert, medical analyst, financial advisor)
